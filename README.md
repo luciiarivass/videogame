@@ -1,0 +1,2 @@
+Mi aplicación va a ser un videojuego corto con 5 niveles, cada nivel va a tener distintas variantes, es decir, en el primer nivel habrá 3 caminos depende de cuál escoja y de qué hablidad tenga sucederá una cosa u otra, también pueden suceder cosas random como obtaculos en el camino.
+El usuario deberá de crear un personaje con una habilidad que tendrá que escoger antes de empezar con los niveles. También depende de la habilidad que tenga el final será distinto.
