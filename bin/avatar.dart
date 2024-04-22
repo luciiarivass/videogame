@@ -2,6 +2,7 @@ import 'Database.dart';
 import 'habilidad.dart';
 class Avatar{
   //Propiedades
+  int? idavatar;
   String? _nombre;
   Habilidad? _habilidad;
   insertarAvatar() async {
