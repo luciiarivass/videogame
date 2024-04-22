@@ -43,9 +43,8 @@ insertarUsuario() async {
 
   var conn = await Database().conexion();
   try{
-  await conn.query("INSERT INTO usuario(nombre,password)VALUES (?,?)",[_nombre,_password]);
+  await conn.query("INSERT INTO usuarios(nombre,password)VALUES (?,?)",[_nombre,_password]);
   print("Usuario insertado correctamente");
-
   } catch(e){
     print(e);
   } finally {

@@ -17,8 +17,8 @@ class Database {
     try{
       await _crearDB(conn);
       await _crearTablaUsuarios(conn);
-      await _crearTablaAvatares(conn);
       await _crearTablaHabilidades(conn);
+      await _crearTablaAvatares(conn);
       await conn.close();
     } catch(e){
       print(e);
@@ -68,7 +68,11 @@ class Database {
     await conn.query('''CREATE TABLE IF NOT EXISTS avatares(
         idavatar INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         nombre VARCHAR(50) NOT NULL,
-        FOREIGN KEY(idhabilidad) REFERENCES habilidades(idhabilidad)
+        vida INT NOT NULL,
+        idhabilidad INT NOT NULL,
+        idusuario INT NOT NULL,
+        FOREIGN KEY(idhabilidad) REFERENCES habilidades(idhabilidad),
+        FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
     )''');
     print('Tabla avatares creada');
   }
