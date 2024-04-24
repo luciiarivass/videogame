@@ -1,12 +1,11 @@
 import 'Database.dart';
-import 'habilidad.dart';
 import 'package:mysql1/mysql1.dart';
 class Avatar{
   //Propiedades
   int? idavatar;
   int? idusuario;
   String? nombre;
-  Habilidad? habilidad;
+  String? habilidad;
   int vida = 20;
 
 Avatar();
@@ -15,14 +14,14 @@ Avatar();
     idavatar = map['idavatar'];
     idusuario = map['idusuario'];
     nombre = map['nombre']; 
-    habilidad = map['idhabilidad'];
+    habilidad = map["habilidad"];
   }
 
   insertarAvatar() async {
 
   var conn = await Database().conexion();
   try{
-  await conn.query("INSERT INTO avatares(nombre,idhabilidad,idusuario)VALUES (?,?,?)",[nombre,habilidad,idusuario]);
+  await conn.query("INSERT INTO avatares(nombre,habilidad,idusuario,vida)VALUES (?,?,?,?)",[nombre,habilidad,idusuario,vida=20]);
   print("avatar insertado correctamente");
 
   } catch(e){
