@@ -40,6 +40,14 @@ class App{
         break;
     }
   }
+  menuJuego(){
+    stdout.writeln("""Bienvenido al juego! 
+    - EL JUEGO CONTIENE 5 CAMINOS CON VARIOS FINALES, TRATA DE RESOLVER PUZZLES""");
+    do{
+    stdout.writeln("""PRIMER CAMINO...
+    """);
+    }while(true);
+  }
 
   login() async {
     Usuario usuario = new Usuario();
