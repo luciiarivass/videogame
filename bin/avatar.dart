@@ -6,7 +6,7 @@ class Avatar{
   int? idusuario;
   String? nombre;
   String? habilidad;
-  int vida = 20;
+  int vida = 3;
 
 Avatar();
     
@@ -21,7 +21,7 @@ Avatar();
 
   var conn = await Database().conexion();
   try{
-  await conn.query("INSERT INTO avatares(nombre,habilidad,idusuario,vida)VALUES (?,?,?,?)",[nombre,habilidad,idusuario,vida=20]);
+  await conn.query("INSERT INTO avatares(nombre,habilidad,idusuario,vida)VALUES (?,?,?,?)",[nombre,habilidad,idusuario,vida=3]);
   print("avatar insertado correctamente");
 
   } catch(e){
@@ -43,4 +43,18 @@ Avatar();
       await conn.close();
     }
   }
+  getAvatar(id)async{
+    var conn = await Database().conexion();
+    
+    try{
+      var resultado = await conn.query('SELECT * FROM avatares WHERE idavatar = ?',[id]);
+      List<Avatar> avatares = resultado.map((row) => Avatar.fromMap(row)).toList();
+      return avatares;
+    } catch(e) {
+      print(e);
+    } finally {
+      await conn.close();
+    }
+  }
 }
+
