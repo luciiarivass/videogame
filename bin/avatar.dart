@@ -45,10 +45,9 @@ Avatar();
   }
   getAvatar(id)async{
     var conn = await Database().conexion();
-    
     try{
       var resultado = await conn.query('SELECT * FROM avatares WHERE idavatar = ?',[id]);
-      List<Avatar> avatares = resultado.map((row) => Avatar.fromMap(row)).toList();
+      Avatar avatares = Avatar.fromMap(resultado.first);
       return avatares;
     } catch(e) {
       print(e);

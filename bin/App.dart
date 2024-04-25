@@ -23,7 +23,7 @@ class App{
     }
   }
 
-  menuLogueado(Usuario usuario) {
+  menuLogueado(Usuario usuario) async {
    int? opcionElegida;
     do{
       stdout.writeln("""Buenas ${usuario.nombre}! 
@@ -35,28 +35,31 @@ class App{
     } while(_InicialrespuestaIncorrecta3(opcionElegida));
     switch(opcionElegida){
       case 1:
-        crearAvatar(usuario.idusuario);
+        await crearAvatar(usuario.idusuario);
+        menuLogueado(usuario);
         break;
       case 2:
-        listarMisAvatares(usuario.idusuario);
+        await listarMisAvatares(usuario.idusuario);
+        menuLogueado(usuario);
         break;
       case 3:
-        menuJuego(usuario);
+        await menuJuego(usuario);
         break;
       default:
         stdout.writeln("Ha habido algún error, intentelo de nuevo...");
     }
   }
-  menuJuego(Usuario usuario){
+  menuJuego(Usuario usuario,) async {
+    int? opcionElegida;
     stdout.writeln(""""Bienvenido al Juego de Hackeo del Sistema de Inteligencia Artificial.
     TIENES 3 VIDAS! Mucha suerte ${usuario.nombre}...""");
-    do{
-      stdout.writeln("Escoge uno de tus avatares para comenzar!");
-      listarMisAvatares(usuario.idusuario);
-      stdin.readLineSync()?? "e";
-    }while();
-    nivel1();
-
+        do{
+      stdout.writeln("""Elige con que personaje comenzar:
+      """);
+      await listarMisAvatares(usuario.idusuario);
+      opcionElegida = parsearOpcion();
+    } while(_InicialrespuestaIncorrecta3(opcionElegida));
+    escogerAvatar(opcionElegida);
   }
 
   login() async {
@@ -100,7 +103,7 @@ class App{
   listarMisAvatares(int? id) async{
     var listadoAvatar = await Avatar().allFromUsuario(id);
     for(Avatar elemento in listadoAvatar){
-      stdout.writeln("${elemento.nombre} - ${elemento.habilidad}");
+      stdout.writeln("${elemento.idavatar} - ${elemento.nombre} - ${elemento.habilidad}");
     }
     return listadoAvatar;
   }
@@ -132,18 +135,45 @@ opcionElegida = parsearOpcion();
         sleep(Duration(seconds: 1));
          stdout.writeln("""Esta es la puerta correcta... 
          Pasas al nivel 2!""");
+         nivel2(avatar);
       break;
       case 3:
       sleep(Duration(seconds: 1));
        stdout.writeln("""Vaya... parece que ha habido una complicación...
        Necesitas resolver el puzzle para continuar.""");
-        
+       getRandomPuzzle();
       default:
         stdout.writeln("Parece que ha habido algún error...");
+  }
 }
-
-}
-nivel2(){
+nivel2(Avatar avatar){
+  String? opcionElegida;
+  int oportunidades = 3;
+  
+do{
+  oportunidades--;
+  if(oportunidades == 0) break;
+  stdout.writeln("""Segundo nivel...
+  Estás intentando autenticarte en el sistema...
+  Acierta las clavea de acceso:
+  Debes descifrar loa siguientes anagramas:
+  1 . PRISA""");
+opcionElegida = stdin.readLineSync()?? "e";
+} while(opcionElegida != "paris"  && opcionElegida != "PARIS" );
+ if(oportunidades == 0) {
+  stdout.writeln("""Parece que has perdido tus 3 intentos... 
+  Te daré una pista, son Nombres de ciudades.""");
+ } else {
+  do{
+  oportunidades--;
+  if(oportunidades == 0) break;
+  stdout.writeln("""
+  Debes descifrar el último anagrama para autenticarte:
+  2 . AMOR""");
+opcionElegida = stdin.readLineSync()?? "e";
+} while(opcionElegida != "ROMA"  && opcionElegida != "roma" );
+ }
+ 
 }
 nivel3(){
 
@@ -153,5 +183,12 @@ nivel4(){
 }
 nivel5(){
   
+}
+getRandomPuzzle(){
+
+}
+escogerAvatar(id)async{
+  
+    return await Avatar().getAvatar(id);
 }
 }
