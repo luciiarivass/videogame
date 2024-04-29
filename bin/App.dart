@@ -36,11 +36,11 @@ class App{
     switch(opcionElegida){
       case 1:
         await crearAvatar(usuario.idusuario);
-        menuLogueado(usuario);
+        await menuLogueado(usuario);
         break;
       case 2:
         await listarMisAvatares(usuario.idusuario);
-        menuLogueado(usuario);
+        await menuLogueado(usuario);
         break;
       case 3:
         await menuJuego(usuario);
@@ -58,7 +58,7 @@ class App{
       """);
       await listarMisAvatares(usuario.idusuario);
       opcionElegida = parsearOpcion();
-    } while(_InicialrespuestaIncorrecta3(opcionElegida));
+    } while(opcionElegida == null);
   
     Avatar avatar = await escogerAvatar(opcionElegida);
     nivel1(avatar,usuario);
@@ -100,7 +100,7 @@ class App{
     avatar.habilidad = habilidades[random];
     avatar.idusuario = id;
     await avatar.insertarAvatar();
-    menuInicial();
+    menuLogueado(id);
   }
 
   listarMisAvatares(int? id) async{
@@ -207,8 +207,7 @@ getRandomPuzzle(Avatar avatar){
            y el primero es tres unidades menos que el segundo. ¿De qué número se trata?""",
     };
     int random = Random().nextInt(6);
-    String? random2 = puzzle[random];
-    switch(random2){
+    switch(random){
       case 1: 
       do{
         stdout.writeln(puzzle[1]);
@@ -280,8 +279,9 @@ looseGame(Avatar avatar, Usuario usuario)async{
       case 2:
         await menuInicial();
         break;
-      default:
+      case 3:
         stdout.writeln("Adios ${usuario.nombre}!");
+        break;
     }
   }
 }
