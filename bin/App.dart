@@ -51,7 +51,7 @@ class App{
   }
   menuJuego(Usuario usuario,) async {
     int? opcionElegida;
-    stdout.writeln(""""Bienvenido al Juego de Hackeo del Sistema de Inteligencia Artificial.
+    stdout.writeln("""Bienvenido al Juego de Hackeo del Sistema de Inteligencia Artificial.
     TIENES 3 VIDAS! Mucha suerte ${usuario.nombre}...""");
         do{
       stdout.writeln("""Elige con que personaje comenzar:
@@ -59,7 +59,10 @@ class App{
       await listarMisAvatares(usuario.idusuario);
       opcionElegida = parsearOpcion();
     } while(_InicialrespuestaIncorrecta3(opcionElegida));
-    escogerAvatar(opcionElegida);
+  
+    Avatar avatar = await escogerAvatar(opcionElegida);
+    nivel1(avatar,usuario);
+    
   }
 
   login() async {
@@ -112,7 +115,7 @@ bool _InicialrespuestaIncorrecta2(var numero) => numero == null || numero != 1 &
 bool _InicialrespuestaIncorrecta3(var numero) => numero == null || numero != 1 && numero !=2 && numero !=3;
 int? parsearOpcion () => int.tryParse(stdin.readLineSync() ?? 'e');
 
-nivel1(Avatar avatar){
+nivel1(Avatar avatar, Usuario usuario) async {
 int? opcionElegida;
 do{
   stdout.writeln("""Bienvenido al primer nivel...
@@ -129,34 +132,38 @@ opcionElegida = parsearOpcion();
         stdout.writeln("""Vaya... parece que te han pillado los guardias. 
         Pierdes una vida...""");
         avatar.vida -=1; 
-        nivel1(avatar);
+        nivel1(avatar,usuario);
       break;
       case 2:
         sleep(Duration(seconds: 1));
          stdout.writeln("""Esta es la puerta correcta... 
          Pasas al nivel 2!""");
-         nivel2(avatar);
+         nivel2(avatar,usuario);
       break;
       case 3:
       sleep(Duration(seconds: 1));
        stdout.writeln("""Vaya... parece que ha habido una complicación...
-       Necesitas resolver el puzzle para continuar.""");
-       getRandomPuzzle();
+       Necesitas resolver el puzzle para continuar.
+       Tienes solo una oportunidad...""");
+       await getRandomPuzzle(avatar);
+       nivel2(avatar,usuario);
+       break;
       default:
         stdout.writeln("Parece que ha habido algún error...");
   }
+  looseGame(avatar,usuario);
 }
-nivel2(Avatar avatar){
+nivel2(Avatar avatar,Usuario usuario){
   String? opcionElegida;
-  int oportunidades = 3;
+  int oportunidades = 4;
   
 do{
   oportunidades--;
   if(oportunidades == 0) break;
   stdout.writeln("""Segundo nivel...
   Estás intentando autenticarte en el sistema...
-  Acierta las clavea de acceso:
-  Debes descifrar loa siguientes anagramas:
+  Acierta las claves de acceso:
+  Debes descifrar los siguientes anagramas:
   1 . PRISA""");
 opcionElegida = stdin.readLineSync()?? "e";
 } while(opcionElegida != "paris"  && opcionElegida != "PARIS" );
@@ -172,6 +179,7 @@ opcionElegida = stdin.readLineSync()?? "e";
   2 . AMOR""");
 opcionElegida = stdin.readLineSync()?? "e";
 } while(opcionElegida != "ROMA"  && opcionElegida != "roma" );
+looseGame(avatar,usuario);
  }
  
 }
@@ -184,11 +192,97 @@ nivel4(){
 nivel5(){
   
 }
-getRandomPuzzle(){
-
+getRandomPuzzle(Avatar avatar){
+  int oportunidad = 1;
+  String? respuesta;
+  var puzzle  = {
+    1 : """Cinco máquinas son capaces de redactar 5 artículos en cinco minutos.
+           Con este ritmo de producción,¿cuánto tiempo necesitan 100 máquinas para elaborar 100 artículos?""",
+    2 : "¿Cuál es el resultado de 3+3x3+3?",
+    3 : "¿Qué número corresponde para seguir la serie? 1, 3, 6, 10, 15, 21 …",
+    4 : "¿Cuántas ½ sandías encontramos en 3 sandías y media?",
+    5 : """Para tratar de resolver sin calculadora,
+           ¿por cuánto hay que multiplicar 21978 para que el resultado sea 87912?""",
+    6 : """En un número de tres dígitos, el del medio es 4 veces más grande que el tercero,
+           y el primero es tres unidades menos que el segundo. ¿De qué número se trata?""",
+    };
+    int random = Random().nextInt(6);
+    String? random2 = puzzle[random];
+    switch(random2){
+      case 1: 
+      do{
+        stdout.writeln(puzzle[1]);
+        respuesta = stdin.readLineSync()?? "e";
+        oportunidad --;
+      }while(respuesta != "5" );
+      break;
+      case 2:
+      do{
+        stdout.writeln(puzzle[2]);
+        respuesta = stdin.readLineSync()?? "e";
+        oportunidad --;
+      }while(respuesta != "15");
+      break;
+      case 3:
+      do{
+        stdout.writeln(puzzle[3]);
+        respuesta = stdin.readLineSync()?? "e";
+        oportunidad --;
+      }while(respuesta != "28");
+      break;
+      case 4:
+      do{
+        stdout.writeln(puzzle[4]);
+        respuesta = stdin.readLineSync()?? "e";
+        oportunidad --;
+      }while(respuesta != "7");
+      break;
+      case 5:
+      do{
+        stdout.writeln(puzzle[5]);
+        respuesta = stdin.readLineSync()?? "e";
+        oportunidad --;
+      }while(respuesta != "4");
+      break;
+      case 6:
+      do{
+        stdout.writeln(puzzle[6]);
+        respuesta = stdin.readLineSync()?? "e";
+        oportunidad --;
+      }while(respuesta != "141");
+      break;
+    }
+    if (oportunidad == 0){
+      avatar.vida-=1;
+      stdout.writeln("Pierdes una vida! Te quedan ${avatar.vida} vidas.");
+    }
 }
 escogerAvatar(id)async{
   
     return await Avatar().getAvatar(id);
 }
+looseGame(Avatar avatar, Usuario usuario)async{
+  int? opcionElegida;
+  if(avatar.vida==0){
+    do{
+    stdout.writeln(""""
+  Vaya... Parece que has perdido todas tus vidas
+  1 - Intentar de nuevo
+  2 - Volver al menú Inicial
+  3- Salir""");
+    opcionElegida = parsearOpcion();
+    } while(_InicialrespuestaIncorrecta3(opcionElegida));
+   }
+   switch(opcionElegida){
+      case 1:
+        await menuJuego(usuario);
+        break;
+      case 2:
+        await menuInicial();
+        break;
+      default:
+        stdout.writeln("Adios ${usuario.nombre}!");
+    }
+  }
 }
+
