@@ -173,7 +173,7 @@ opcionElegida = stdin.readLineSync()?? "e";
  } else {
   do{
   oportunidades--;
-  if(oportunidades == 0) break;
+  if(oportunidades == 0) break; // MIRAR
   stdout.writeln("""
   Debes descifrar el último anagrama para autenticarte:
   2 . AMOR""");
@@ -181,17 +181,55 @@ opcionElegida = stdin.readLineSync()?? "e";
 } while(opcionElegida != "ROMA"  && opcionElegida != "roma" );
 looseGame(avatar,usuario);
  }
- 
 }
-nivel3(){
+nivel3(Avatar avatar,Usuario usuario){
 
-}
+stdout.writeln("""Tercer nivel...
+Necesitas desactivar el cortafuegos para continuar, debes adivinar
+la clave de acceso. Mucha suerte ${avatar.nombre}!""");
+
+looseGame(avatar,usuario);
+ }
 nivel4(){
   
 }
 nivel5(){
   
 }
+ juegonivel3(Avatar avatar){
+  String? respuesta;
+    List <String> palabras = ["virus","spam","hacker","host","clase","privado","server","logico","teclado"];
+    Random random = Random();
+    String palabraSecreta = palabras[random.nextInt(palabras.length)];
+    String palabraJuego = "_" * palabraSecreta.length;
+    int oportunidad = 10;
+    stdout.writeln("""Instrucciones:
+    - Para descifrar la palabra tienes 10 intentos, debes introducir distintas letras,
+    y cada letra es un intento.
+    - Cuando descifre una letra se irá mostrando en cada intento.
+    - Si pierdes los 10 intentos se le quitará una vida.
+    Las palabras a descifrar son...
+    """);
+    sleep(Duration(seconds: 1));
+    stdout.writeln("$palabras");
+    do{
+      oportunidad --;
+      stdout.writeln("""
+    - Palabra : $palabraJuego
+    - Te quedan $oportunidad oportunidades""");
+    respuesta = stdin.readLineSync();
+    if(respuesta == palabraSecreta){
+      stdout.writeln("Enhorabuena has acertado! Pasas al último nivel.");
+    }
+
+    }while(respuesta != palabraSecreta);
+
+     if (oportunidad == 0){
+      avatar.vida-=1;
+      stdout.writeln("Pierdes una vida! Te quedan ${avatar.vida} vidas.");
+    }
+
+  }
 getRandomPuzzle(Avatar avatar){
   int oportunidad = 1;
   String? respuesta;
@@ -283,6 +321,5 @@ looseGame(Avatar avatar, Usuario usuario)async{
         stdout.writeln("Adios ${usuario.nombre}!");
         break;
     }
-  }
 }
-
+}
