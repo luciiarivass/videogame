@@ -250,7 +250,7 @@ juegonivel3(Avatar avatar,Usuario usuario){
             'Lo siento, te has quedado sin intentos, la palabra era $palabraRandom');
       }
       if(avatar.vida>0 && oportunidad == 0){
-        stdout.write("""Vaya parece que no has adivinado la palabra...
+        stdout.writeln("""Vaya parece que no has adivinado la palabra...
         Tienes mas intentos hasta perder todas tus vidas restantes.""");
         nivel3(avatar, usuario);
       }
