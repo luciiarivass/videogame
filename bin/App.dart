@@ -222,13 +222,13 @@ juegonivel3(Avatar avatar,Usuario usuario){
   sleep(Duration(seconds: 1));
   stdout.writeln("$palabras");
     do {
-      print('Palabra: $palabraOculta');
-      print('Intentos $oportunidad');
+      stdout.writeln('Palabra: $palabraOculta');
+      stdout.writeln('Intentos $oportunidad');
       stdout.writeln("Introduce una letra");
       String respuesta = stdin.readLineSync() ?? "e";
 
       if (respuesta == palabraRandom) {
-        print("Enhorabuena, has acertado! Pasas de nivel");
+        stdout.writeln("Enhorabuena, has acertado! Pasas de nivel");
       } else if (palabraRandom.contains(respuesta)) {
         for (int i = 0; i < palabraRandom.length; i++) {
           if (palabraRandom[i] == respuesta) {
@@ -238,15 +238,15 @@ juegonivel3(Avatar avatar,Usuario usuario){
         }
       } else {
         oportunidad--;
-        print(
+       stdout.writeln(
             '''Lo siento, la letra $respuesta no está en la palabra.   Intentos: $oportunidad''');
       }
       if (palabraOculta == palabraRandom) {
-        print('''Enhorabuena, has acertado la palabra. Pasas de nivel!''');
+        stdout.writeln('''Enhorabuena, has acertado la palabra. Pasas de nivel!''');
         break;
       }
       if (oportunidad == 0) {
-        print(
+        stdout.writeln(
             'Lo siento, te has quedado sin intentos, la palabra era $palabraRandom');
       }
       if(avatar.vida>0 && oportunidad == 0){
