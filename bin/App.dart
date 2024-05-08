@@ -4,7 +4,7 @@ import 'dart:math';
 import 'usuario.dart';
 
 class App{
-  List<String> habilidades = ["Fuego","Aire","Tierra","Agua"];
+  List<String> habilidades = ["Lógica","Ciberseguridad","Programación","Bigdata"];
   menuInicial(){
     int? opcionElegida;
     do{
@@ -35,7 +35,7 @@ class App{
     } while(_InicialrespuestaIncorrecta3(opcionElegida));
     switch(opcionElegida){
       case 1:
-        await crearAvatar(usuario.idusuario);
+        await crearAvatar(usuario);
         await menuLogueado(usuario);
         break;
       case 2:
@@ -86,10 +86,10 @@ class App{
     stdout.writeln('Introduce una constraseña');
     usuario.password = stdin.readLineSync();
     await usuario.insertarUsuario();
-    menuInicial();
+    menuLogueado(usuario);
   }
 
-  crearAvatar(id) async {
+  crearAvatar(Usuario usuario) async {
     Avatar avatar = new Avatar();
     stdout.writeln('Introduce un nombre para tu avatar');
     avatar.nombre = stdin.readLineSync();
@@ -98,9 +98,10 @@ class App{
     int random = Random().nextInt(4);
     stdout.writeln(habilidades[random]);
     avatar.habilidad = habilidades[random];
-    avatar.idusuario = id;
+    avatar.idusuario = usuario.idusuario;
+    // TODO mirar error
     await avatar.insertarAvatar();
-    menuLogueado(id);
+    
   }
 
   listarMisAvatares(int? id) async{
@@ -146,180 +147,197 @@ opcionElegida = parsearOpcion();
        Necesitas resolver el puzzle para continuar.
        Tienes solo una oportunidad...""");
        await getRandomPuzzle(avatar);
-       nivel2(avatar,usuario);
        break;
       default:
         stdout.writeln("Parece que ha habido algún error...");
   }
-  looseGame(avatar,usuario);
+  if(avatar.vida==0){
+  looseGame(usuario);
+}
+nivel2(avatar,usuario);
 }
 nivel2(Avatar avatar,Usuario usuario){
   String? opcionElegida;
-  int oportunidades = 4;
+  int oportunidades = 3;
   
 do{
+  sleep(Duration(seconds: 1));
   oportunidades--;
-  if(oportunidades == 0) break;
   stdout.writeln("""Segundo nivel...
   Estás intentando autenticarte en el sistema...
   Acierta las claves de acceso:
+  Tienes 3 oportunidades!
   Debes descifrar los siguientes anagramas:
+  Pista: Es un nombre de una ciudad.
   1 . PRISA""");
+  if(oportunidades == 0) break;
 opcionElegida = stdin.readLineSync()?? "e";
 } while(opcionElegida != "paris"  && opcionElegida != "PARIS" );
- if(oportunidades == 0) {
-  stdout.writeln("""Parece que has perdido tus 3 intentos... 
-  Te daré una pista, son Nombres de ciudades.""");
- } else {
-  do{
-  oportunidades--;
-  if(oportunidades == 0) break; // MIRAR
-  stdout.writeln("""
-  Debes descifrar el último anagrama para autenticarte:
-  2 . AMOR""");
-opcionElegida = stdin.readLineSync()?? "e";
-} while(opcionElegida != "ROMA"  && opcionElegida != "roma" );
-looseGame(avatar,usuario);
- }
+if(oportunidades==0){
+  sleep(Duration(seconds: 1));
+  stdout.writeln("Vaya... pasas de nivel pero pierdes una vida!");
+  avatar.vida-=1;
+  stdout.writeln("Te quedan ${avatar.vida} vidas");
 }
+if(avatar.vida==0){
+  sleep(Duration(seconds: 1));
+  looseGame(usuario);
+}
+stdout.write("Enhorabuena! pasas de nivel.");
+nivel3(avatar, usuario);
+}
+
 nivel3(Avatar avatar,Usuario usuario){
-
+sleep(Duration(seconds: 1));
 stdout.writeln("""Tercer nivel...
-Necesitas desactivar el cortafuegos para continuar, debes adivinar
+Necesitas desactivar el cortafuegos y conseguir hackear a la IA, debes adivinar
 la clave de acceso. Mucha suerte ${avatar.nombre}!""");
-
-looseGame(avatar,usuario);
- }
-nivel4(){
-  
+juegonivel3(avatar,usuario);
+if(avatar.vida==0){
+  stdout.writeln("Vaya... Parece que has perdido todas tus vidas");
+  looseGame(usuario);
 }
-nivel5(){
-  
 }
- juegonivel3(Avatar avatar){
-  String? respuesta;
-    List <String> palabras = ["virus","spam","hacker","host","clase","privado","server","logico","teclado"];
-    Random random = Random();
-    String palabraSecreta = palabras[random.nextInt(palabras.length)];
-    String palabraJuego = "_" * palabraSecreta.length;
-    int oportunidad = 10;
-    stdout.writeln("""Instrucciones:
-    - Para descifrar la palabra tienes 10 intentos, debes introducir distintas letras,
-    y cada letra es un intento.
-    - Cuando descifre una letra se irá mostrando en cada intento.
-    - Si pierdes los 10 intentos se le quitará una vida.
-    Las palabras a descifrar son...
-    """);
-    sleep(Duration(seconds: 1));
-    stdout.writeln("$palabras");
-    do{
-      oportunidad --;
-      stdout.writeln("""
-    - Palabra : $palabraJuego
-    - Te quedan $oportunidad oportunidades""");
-    respuesta = stdin.readLineSync();
-    if(respuesta == palabraSecreta){
-      stdout.writeln("Enhorabuena has acertado! Pasas al último nivel.");
-    }
+nivel4(Usuario usuario){
+  sleep(Duration(seconds: 1));
+  stdout.writeln("""ENHORABUENA!!!
+  Has conseguido hackear el sistema de Inteligencia Artificial.
+  Conseguiste que el resto de informáticos no hayan sido reemplazados por las IAS""");
+  looseGame(usuario);
+}
 
-    }while(respuesta != palabraSecreta);
+ 
+juegonivel3(Avatar avatar,Usuario usuario){
+  List <String> palabras = ["virus","spam","hacker","host","clase","privado","server","logico","teclado"];
+  Random random = Random();
+  String palabraRandom = palabras[random.nextInt(palabras.length)];
+  String palabraOculta = "_" * palabraRandom.length;
+  int oportunidad = 10;
+  stdout.writeln("""Instrucciones:
+  - Para descifrar la palabra tienes 10 intentos, debes introducir distintas letras,
+  y cada letra es un intento.
+  - Cuando descifre una letra se irá mostrando en cada intento.
+  - Si pierdes los 10 intentos se le quitará una vida.
+  Las palabras a descifrar son...""");
+  sleep(Duration(seconds: 1));
+  stdout.writeln("$palabras");
+    do {
+      print('Palabra: $palabraOculta');
+      print('Intentos $oportunidad');
+      stdout.writeln("Introduce una letra");
+      String respuesta = stdin.readLineSync() ?? "e";
 
-     if (oportunidad == 0){
+      if (respuesta == palabraRandom) {
+        print("Enhorabuena, has acertado! Pasas de nivel");
+      } else if (palabraRandom.contains(respuesta)) {
+        for (int i = 0; i < palabraRandom.length; i++) {
+          if (palabraRandom[i] == respuesta) {
+            palabraOculta = palabraOculta.replaceFirst('_', respuesta, i++);
+            oportunidad--;
+          }
+        }
+      } else {
+        oportunidad--;
+        print(
+            '''Lo siento, la letra $respuesta no está en la palabra.   Intentos: $oportunidad''');
+      }
+      if (palabraOculta == palabraRandom) {
+        print('''Enhorabuena, has acertado la palabra. Pasas de nivel!''');
+        break;
+      }
+      if (oportunidad == 0) {
+        print(
+            'Lo siento, te has quedado sin intentos, la palabra era $palabraRandom');
+      }
+      if(avatar.vida>0 && oportunidad == 0){
+        stdout.write("""Vaya parece que no has adivinado la palabra...
+        Tienes mas intentos hasta perder todas tus vidas restantes.""");
+        nivel3(avatar, usuario);
+      }
+
+    } while (oportunidad > 0);
+  if (oportunidad == 0){
       avatar.vida-=1;
       stdout.writeln("Pierdes una vida! Te quedan ${avatar.vida} vidas.");
     }
-
-  }
+    nivel4(usuario);
+}
 getRandomPuzzle(Avatar avatar){
-  int oportunidad = 1;
-  String? respuesta;
-  var puzzle  = {
-    1 : """Cinco máquinas son capaces de redactar 5 artículos en cinco minutos.
-           Con este ritmo de producción,¿cuánto tiempo necesitan 100 máquinas para elaborar 100 artículos?""",
-    2 : "¿Cuál es el resultado de 3+3x3+3?",
-    3 : "¿Qué número corresponde para seguir la serie? 1, 3, 6, 10, 15, 21 …",
-    4 : "¿Cuántas ½ sandías encontramos en 3 sandías y media?",
-    5 : """Para tratar de resolver sin calculadora,
-           ¿por cuánto hay que multiplicar 21978 para que el resultado sea 87912?""",
-    6 : """En un número de tres dígitos, el del medio es 4 veces más grande que el tercero,
-           y el primero es tres unidades menos que el segundo. ¿De qué número se trata?""",
-    };
-    int random = Random().nextInt(6);
-    switch(random){
-      case 1: 
-      do{
-        stdout.writeln(puzzle[1]);
-        respuesta = stdin.readLineSync()?? "e";
-        oportunidad --;
-      }while(respuesta != "5" );
-      break;
-      case 2:
-      do{
-        stdout.writeln(puzzle[2]);
-        respuesta = stdin.readLineSync()?? "e";
-        oportunidad --;
-      }while(respuesta != "15");
-      break;
-      case 3:
-      do{
-        stdout.writeln(puzzle[3]);
-        respuesta = stdin.readLineSync()?? "e";
-        oportunidad --;
-      }while(respuesta != "28");
-      break;
-      case 4:
-      do{
-        stdout.writeln(puzzle[4]);
-        respuesta = stdin.readLineSync()?? "e";
-        oportunidad --;
-      }while(respuesta != "7");
-      break;
-      case 5:
-      do{
-        stdout.writeln(puzzle[5]);
-        respuesta = stdin.readLineSync()?? "e";
-        oportunidad --;
-      }while(respuesta != "4");
-      break;
-      case 6:
-      do{
-        stdout.writeln(puzzle[6]);
-        respuesta = stdin.readLineSync()?? "e";
-        oportunidad --;
-      }while(respuesta != "141");
-      break;
-    }
-    if (oportunidad == 0){
-      avatar.vida-=1;
-      stdout.writeln("Pierdes una vida! Te quedan ${avatar.vida} vidas.");
-    }
+String? respuesta;
+var puzzle  = {
+  1 : """Cinco máquinas son capaces de redactar 5 artículos en cinco minutos.
+  Con este ritmo de producción,¿cuánto tiempo necesitan 100 máquinas para elaborar 100 artículos?""",
+  2 : "¿Cuál es el resultado de 3+3x3+3?",
+  3 : "¿Qué número corresponde para seguir la serie? 1, 3, 6, 10, 15, 21 …",
+  4 : "¿Cuántas ½ sandías encontramos en 3 sandías y media?",
+  5 : """Para tratar de resolver sin calculadora,
+   ¿por cuánto hay que multiplicar 21978 para que el resultado sea 87912?""",
+  6 : """En un número de tres dígitos, el del medio es 4 veces más grande que el tercero,
+   y el primero es tres unidades menos que el segundo. ¿De qué número se trata?""",
+  };
+int random = Random().nextInt(6);
+switch(random){
+  case 1: 
+    do{
+      stdout.writeln(puzzle[1]);
+      respuesta = stdin.readLineSync()?? "e";
+    }while(respuesta != "5" );
+    break;
+  case 2:
+    do{
+      stdout.writeln(puzzle[2]);
+      respuesta = stdin.readLineSync()?? "e";
+    }while(respuesta != "15");
+    break;
+  case 3:
+    do{
+      stdout.writeln(puzzle[3]);
+      respuesta = stdin.readLineSync()?? "e";
+    }while(respuesta != "28");
+    break;
+  case 4:
+    do{
+      stdout.writeln(puzzle[4]);
+      respuesta = stdin.readLineSync()?? "e";
+    }while(respuesta != "7");
+    break;
+  case 5:
+    do{
+      stdout.writeln(puzzle[5]);
+      respuesta = stdin.readLineSync()?? "e";
+    }while(respuesta != "4");
+    break;
+  case 6:
+    do{
+      stdout.writeln(puzzle[6]);
+      respuesta = stdin.readLineSync()?? "e";
+    }while(respuesta != "141");
+    break;
+  }
 }
 escogerAvatar(id)async{
-  
-    return await Avatar().getAvatar(id);
+  return await Avatar().getAvatar(id);
 }
-looseGame(Avatar avatar, Usuario usuario)async{
-  int? opcionElegida;
-  if(avatar.vida==0){
-    do{
-    stdout.writeln(""""
-  Vaya... Parece que has perdido todas tus vidas
+looseGame(Usuario usuario){
+int? opcionElegida;
+do{
+  stdout.writeln("""
   1 - Intentar de nuevo
   2 - Volver al menú Inicial
   3- Salir""");
-    opcionElegida = parsearOpcion();
-    } while(_InicialrespuestaIncorrecta3(opcionElegida));
-   }
-   switch(opcionElegida){
-      case 1:
-        await menuJuego(usuario);
-        break;
-      case 2:
-        await menuInicial();
-        break;
-      case 3:
-        stdout.writeln("Adios ${usuario.nombre}!");
-        break;
-    }
+  opcionElegida = parsearOpcion();
+}while(_InicialrespuestaIncorrecta3(opcionElegida));
+switch(opcionElegida){
+case 1:
+  menuJuego(usuario);
+  break;
+case 2:
+  menuInicial();
+  break;
+case 3:
+  stdout.writeln("Adios ${usuario.nombre}!");
+  break;
 }
 }
+}
+
